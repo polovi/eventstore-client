@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "rootDir": "src/",
+    "outDir": "lib/",
+    "noImplicitAny": false,
+    "removeComments": true,
+    "sourceMap": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "declaration": true,
+    "strict": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}

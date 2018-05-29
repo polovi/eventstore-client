@@ -1,0 +1,22 @@
+{
+  "name": "eventstore",
+  "version": "0.0.8",
+  "description": "",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/polovi/eventstore.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^10.1.3",
+    "aws-sdk": "^2.248.1",
+    "typescript": "^2.8.3"
+  }
+}
