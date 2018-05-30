@@ -17,8 +17,8 @@ const invoke = async (functionName: string, data: any): Promise<any> =>
   lambda
     .invoke({ FunctionName: functionName, Payload: JSON.stringify(data) })
     .promise()
-    .then(res => {
-      const payload = JSON.parse(data.Payload as any)
+    .then(data => {
+      const payload = JSON.parse(data.Payload as string)
       if (data.FunctionError) {
         throw new Error(payload.errorMessage || '')
       }
