@@ -1,6 +1,6 @@
 {
-  "name": "eventstore",
-  "version": "0.0.8",
+  "name": "eventstore-client",
+  "version": "0.1.0",
   "description": "",
   "main": "./lib/index.js",
   "types": "./lib/index.d.js",
