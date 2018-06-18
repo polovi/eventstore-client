@@ -25,5 +25,3 @@ export const createClient = (endpoint: string) => ({
     return sendCommand(endpoint, 'readStreamEventsForward', { stream, start }, readStreamEventsResponseHandler)
   },
 })
-
-createClient('').readStreamEventsForward('')
