@@ -1,6 +1,7 @@
 import { Lambda } from 'aws-sdk'
 import * as Ensure from './ensure'
-import { readStreamEventsResponseHandler } from './responseHandlers'
+import { readStreamEventsResponseHandler, appendToStreamResponseHandler } from './responseHandlers'
+import { Event } from './data'
 
 const lambda = new Lambda()
 
@@ -23,5 +24,10 @@ export const createClient = (endpoint: string) => ({
   readStreamEventsForward: async (stream: string, start: number = 0) => {
     Ensure.notNullOrEmpty(stream, 'stream')
     return sendCommand(endpoint, 'readStreamEventsForward', { stream, start }, readStreamEventsResponseHandler)
+  },
+
+  appendToStream: async (stream: string, expectedVersion: number, events: Event<any>[]) => {
+    Ensure.notNullOrEmpty(stream, 'stream')
+    return sendCommand(endpoint, 'appendToStream', { stream, expectedVersion, events }, appendToStreamResponseHandler)
   },
 })
