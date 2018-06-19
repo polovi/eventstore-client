@@ -1,9 +1,9 @@
-export interface Event<T extends object> {
+export interface Event {
     eventType: string;
-    data: T;
+    data: object;
     metadata?: object;
 }
-export interface ResolvedEvent<T extends object> extends Event<T> {
+export interface ResolvedEvent extends Event {
     eventId: string;
     eventVersion: number;
 }
@@ -19,7 +19,7 @@ export declare enum ReadStreamResult {
 export interface ReadStreamResponse {
     result: ReadStreamResult;
     stream: string;
-    events: Event<any>[];
+    events: ResolvedEvent[];
     fromEventVersion: number;
     nextEventVersion: number;
     lastEventVersion: number;
@@ -34,7 +34,7 @@ export declare enum SliceReadStatus {
 export interface StreamEventsSlice {
     status: SliceReadStatus;
     stream: string;
-    events: Event<any>[];
+    events: Event[];
     fromEventVersion: number;
     nextEventVersion: number;
     lastEventVersion: number;
