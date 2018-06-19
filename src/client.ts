@@ -7,7 +7,7 @@ const lambda = new Lambda()
 
 export interface IEventStoreClient {
   readStreamEventsForward(stream: string, start: number): Promise<StreamEventsSlice>
-  appendToStream(stream: string, expectedVersion: number, events: Event<any>[]): Promise<WriteResult>
+  appendToStream(stream: string, expectedVersion: number, events: Event[]): Promise<WriteResult>
 }
 
 const invoke = async (functionName: string, data: any): Promise<any> =>
@@ -31,7 +31,7 @@ export const createClient = (endpoint: string): IEventStoreClient => ({
     return sendCommand(endpoint, 'readStreamEventsForward', { stream, start }, readStreamEventsResponseHandler)
   },
 
-  appendToStream: async (stream: string, expectedVersion: number, events: Event<any>[]) => {
+  appendToStream: async (stream: string, expectedVersion: number, events: Event[]) => {
     Ensure.notNullOrEmpty(stream, 'stream')
     return sendCommand(endpoint, 'appendToStream', { stream, expectedVersion, events }, appendToStreamResponseHandler)
   },
