@@ -1,38 +1,35 @@
-import { Lambda } from 'aws-sdk'
 import * as Ensure from './ensure'
-import { readStreamEventsResponseHandler, appendToStreamResponseHandler } from './responseHandlers'
-import { Event, StreamEventsSlice, WriteResult } from './data'
-
-const lambda = new Lambda()
+import { sendCommand, InvokeCommand } from './service'
+import { makeWriteEventsHandler, makeReadStreamEventsHandler } from './handlers'
+import { StreamEventsSlice, WriteResult } from './results'
+import { EventData } from './events'
 
 export interface IEventStoreClient {
   readStreamEventsForward(stream: string, start: number): Promise<StreamEventsSlice>
-  appendToStream(stream: string, expectedVersion: number, events: Event[]): Promise<WriteResult>
+  appendToStream?(stream: string, expectedVersion: number, events: EventData[]): Promise<WriteResult>
 }
 
-const invoke = async (functionName: string, data: any): Promise<any> =>
-  lambda
-    .invoke({ FunctionName: functionName, Payload: JSON.stringify(data) })
-    .promise()
-    .then(data => {
-      const payload = JSON.parse(data.Payload as string)
-      if (data.FunctionError) {
-        throw new Error(payload.errorMessage || '')
-      }
-      return payload
-    })
-
-export const sendCommand = async (endpoint: string, command: string, data: any, handler: any) =>
-  invoke(endpoint, { command, data }).then(handler)
-
-export const createClient = (endpoint: string): IEventStoreClient => ({
-  readStreamEventsForward: async (stream: string, start: number = 0) => {
+export const makeClient = (endpoint: string): IEventStoreClient => ({
+  appendToStream: async (stream, expectedVersion, events) => {
     Ensure.notNullOrEmpty(stream, 'stream')
-    return sendCommand(endpoint, 'readStreamEventsForward', { stream, start }, readStreamEventsResponseHandler)
+    Ensure.notEmpty(events, 'events')
+
+    const handler = makeWriteEventsHandler(stream, expectedVersion)
+
+    return sendCommand<WriteResult>(endpoint, handler, {
+      command: InvokeCommand.WriteEvents,
+      data: { stream, expectedVersion, events },
+    })
   },
 
-  appendToStream: async (stream: string, expectedVersion: number, events: Event[]) => {
+  readStreamEventsForward: async (stream, start) => {
     Ensure.notNullOrEmpty(stream, 'stream')
-    return sendCommand(endpoint, 'appendToStream', { stream, expectedVersion, events }, appendToStreamResponseHandler)
+
+    const handler = makeReadStreamEventsHandler(stream, start)
+
+    return sendCommand<StreamEventsSlice>(endpoint, handler, {
+      command: InvokeCommand.ReadStreamEventsForward,
+      data: { stream, start },
+    })
   },
 })

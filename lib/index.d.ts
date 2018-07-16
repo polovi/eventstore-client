@@ -1,3 +1,4 @@
 export * from './client';
-export { SliceReadStatus, StreamEventsSlice, Event, ExpectedVersion, WriteResult } from './data';
-export { ArgumentNullException, ArgumentOutOfRangeException } from './ensure';
+export * from './errors';
+export * from './results';
+export * from './events';

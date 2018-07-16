@@ -1,7 +1,7 @@
-import { Event, StreamEventsSlice, WriteResult } from './data';
+import { StreamEventsSlice, WriteResult } from './results';
+import { EventData } from './events';
 export interface IEventStoreClient {
     readStreamEventsForward(stream: string, start: number): Promise<StreamEventsSlice>;
-    appendToStream(stream: string, expectedVersion: number, events: Event[]): Promise<WriteResult>;
+    appendToStream?(stream: string, expectedVersion: number, events: EventData[]): Promise<WriteResult>;
 }
-export declare const sendCommand: (endpoint: string, command: string, data: any, handler: any) => Promise<any>;
-export declare const createClient: (endpoint: string) => IEventStoreClient;
+export declare const makeClient: (endpoint: string) => IEventStoreClient;
