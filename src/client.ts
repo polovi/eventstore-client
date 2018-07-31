@@ -13,8 +13,8 @@ import { EventData } from './event'
 export interface IEventStoreClient {
   appendToStream(stream: string, expectedVersion: number, events: EventData[]): Promise<WriteResult>
   readEvent(stream: string, eventNumber: number): Promise<any>
-  readStreamEventsForward(stream: string, start: number, count: number): Promise<any>
-  readStreamEventsBackward(stream: string, start: number, count: number): Promise<any>
+  readStreamEventsForward(stream: string, start: number, count?: number): Promise<any>
+  readStreamEventsBackward(stream: string, start: number, count?: number): Promise<any>
 }
 
 export const makeClient = (endpoint: string): IEventStoreClient => ({
@@ -38,10 +38,10 @@ export const makeClient = (endpoint: string): IEventStoreClient => ({
     })
   },
 
-  readStreamEventsForward: async (stream, start, count) => {
+  readStreamEventsForward: async (stream, start, count?) => {
     Ensure.notNullOrEmpty(stream, 'stream')
     Ensure.positive(start, 'start')
-    Ensure.nonNegative(count, 'count')
+    count && Ensure.nonNegative(count, 'count')
 
     return sendCommand<StreamEventsSlice>(endpoint, readStreamEventsForwardHandler, {
       command: InvocationCommand.ReadStreamEventsForward,
@@ -49,9 +49,9 @@ export const makeClient = (endpoint: string): IEventStoreClient => ({
     })
   },
 
-  readStreamEventsBackward: async (stream, start, count) => {
+  readStreamEventsBackward: async (stream, start, count?) => {
     Ensure.notNullOrEmpty(stream, 'stream')
-    Ensure.positive(count, 'count')
+    count && Ensure.positive(count, 'count')
 
     return sendCommand<StreamEventsSlice>(endpoint, readStreamEventsBackwarddHandler, {
       command: InvocationCommand.ReadStreamEventsBackward,
