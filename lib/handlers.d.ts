@@ -1,14 +1,31 @@
-import { WriteEventsCompleted, ReadStreamEventsCompleted } from './messages';
-import { SliceReadStatus } from './results';
+import { WriteEventsCompleted, ReadEventCompleted, ReadStreamEventsCompleted } from './messages';
+import { EventReadStatus, SliceReadStatus, ReadDirection } from './results';
 export declare const makeWriteEventsHandler: (stream: string, expectedVersion: number) => (response: WriteEventsCompleted) => {
     nextExpectedVersion: number;
 };
-export declare const makeReadStreamEventsHandler: (stream: string, fromEventVersion: number) => ({ result, error, ...response }: ReadStreamEventsCompleted) => {
-    status: SliceReadStatus;
-    events: import("../../../../../Volumes/External/AWS/eventstore-client/src/events").ResolvedEvent[];
+export declare const makeReadEventHandler: (eventNumber: number) => ({ result, error, ...response }: ReadEventCompleted) => {
+    eventNumber: number;
+    status: EventReadStatus;
     stream: string;
-    fromEventVersion: number;
-    nextEventVersion: number;
-    lastEventVersion: number;
+    event: import("./event").EventRecord;
+};
+export declare const readStreamEventsForwardHandler: (response: ReadStreamEventsCompleted) => {
+    readDirection: ReadDirection;
+    status: SliceReadStatus;
+    stream: string;
+    events: import("./event").EventRecord[];
+    fromEventNumber: number;
+    nextEventNumber: number;
+    lastEventNumber: number;
+    isEndOfStream: boolean;
+};
+export declare const readStreamEventsBackwarddHandler: (response: ReadStreamEventsCompleted) => {
+    readDirection: ReadDirection;
+    status: SliceReadStatus;
+    stream: string;
+    events: import("./event").EventRecord[];
+    fromEventNumber: number;
+    nextEventNumber: number;
+    lastEventNumber: number;
     isEndOfStream: boolean;
 };

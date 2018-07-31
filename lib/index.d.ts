@@ -1,4 +1,4 @@
-export * from './client';
 export * from './errors';
+export * from './event';
 export * from './results';
-export * from './events';
+export { makeClient, IEventStoreClient } from './client';

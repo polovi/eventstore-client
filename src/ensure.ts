@@ -1,18 +1,4 @@
-export class ArgumentNullException extends Error {
-  constructor(argumentName?: string, msg?: string) {
-    super(`${msg || 'Value cannot be null.'}${argumentName ? ` Parameter name: ${argumentName}` : ''}`)
-  }
-}
-
-export class ArgumentOutOfRangeException extends Error {
-  constructor(argumentName?: string, msg?: string) {
-    super(
-      `${msg || 'Specified argument was out of the range of valid values.'}${
-        argumentName ? ` Parameter name: ${argumentName}` : ''
-      }`
-    )
-  }
-}
+import { ArgumentNullException, ArgumentOutOfRangeException } from './errors'
 
 export const notNullOrEmpty = (value: string, argumentName: string) => {
   if (!value) {
@@ -20,8 +6,20 @@ export const notNullOrEmpty = (value: string, argumentName: string) => {
   }
 }
 
-export const notEmpty = (value: any[], argumentName: string) => {
+export const notNullOrEmptyArray = (value: any[], argumentName: string) => {
   if (!value || !Array.isArray(value) || !value.length) {
     throw new ArgumentOutOfRangeException(argumentName, `${argumentName}  should be non-empty array.`)
+  }
+}
+
+export const positive = (value: number, argumentName: string) => {
+  if (value <= 0) {
+    throw new ArgumentOutOfRangeException(argumentName, `${argumentName} should be positive.`)
+  }
+}
+
+export const nonNegative = (value: number, argumentName: string) => {
+  if (value < 0) {
+    throw new ArgumentOutOfRangeException(argumentName, `${argumentName} should be non-negative.`)
   }
 }

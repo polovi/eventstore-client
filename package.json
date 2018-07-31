@@ -1,6 +1,6 @@
 {
   "name": "eventstore-client",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "",
   "main": "./lib/index.js",
   "types": "./lib/index.d.js",
@@ -15,8 +15,8 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^10.5.2",
-    "aws-sdk": "^2.275.1",
-    "typescript": "^2.9.2"
+    "@types/node": "^10.5.4",
+    "aws-sdk": "^2.284.1",
+    "typescript": "^3.0.1"
   }
 }
