@@ -1,5 +1,6 @@
 import { WriteEventsCompleted, ReadEventCompleted, ReadStreamEventsCompleted } from './messages';
-import { EventReadStatus, SliceReadStatus, ReadDirection } from './results';
+import { EventReadStatus, SliceReadStatus } from './results';
+import { ReadDirection } from './data';
 export declare const makeWriteEventsHandler: (stream: string, expectedVersion: number) => (response: WriteEventsCompleted) => {
     nextExpectedVersion: number;
 };

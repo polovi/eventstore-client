@@ -7,7 +7,8 @@ import {
   ReadStreamEventsCompleted,
   ReadStreamResult,
 } from './messages'
-import { EventReadStatus, SliceReadStatus, ReadDirection } from './results'
+import { EventReadStatus, SliceReadStatus } from './results'
+import { ReadDirection } from './data'
 
 export const makeWriteEventsHandler = (stream: string, expectedVersion: number) => (response: WriteEventsCompleted) => {
   switch (response.result) {
