@@ -1,5 +1,3 @@
-import { EventRecord } from './event'
-
 export enum OperationResult {
   Success = 0,
   WrongExpectedVersion = 1,
@@ -23,7 +21,7 @@ export enum ReadEventResult {
 export interface ReadEventCompleted {
   result: ReadEventResult
   stream: string
-  event: EventRecord
+  event: any
   error?: string
 }
 
@@ -36,7 +34,7 @@ export enum ReadStreamResult {
 export interface ReadStreamEventsCompleted {
   result: ReadStreamResult
   stream: string
-  events: EventRecord[]
+  events: any[]
   fromEventNumber: number
   nextEventNumber: number
   lastEventNumber: number

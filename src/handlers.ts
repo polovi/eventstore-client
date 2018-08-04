@@ -1,68 +1,45 @@
 import { WrongExpectedVersionError, ServerError } from './errors'
-import {
-  WriteEventsCompleted,
-  OperationResult,
-  ReadEventCompleted,
-  ReadEventResult,
-  ReadStreamEventsCompleted,
-  ReadStreamResult,
-} from './messages'
-import { EventReadStatus, SliceReadStatus } from './results'
+import * as ClientMessages from './messages'
+import { EventReadStatus, EventReadResult, WriteResult, StreamEventsSlice, SliceReadStatus } from './results'
 import { ReadDirection } from './data'
 
-export const makeWriteEventsHandler = (stream: string, expectedVersion: number) => (response: WriteEventsCompleted) => {
+export const makeWriteEventsHandler = (stream: string, expectedVersion: number) => (response: ClientMessages.WriteEventsCompleted): WriteResult => {
   switch (response.result) {
-    case OperationResult.Success:
+    case ClientMessages.OperationResult.Success:
       return { nextExpectedVersion: response.lastEventNumber }
-    case OperationResult.WrongExpectedVersion:
+    case ClientMessages.OperationResult.WrongExpectedVersion:
       throw new WrongExpectedVersionError(
-        `Append failed due to WrongExpectedVersion. Stream: ${stream}, Expected version: ${expectedVersion}, Current version: ${
-          response.currentVersion
-        }`
+        `Append failed due to WrongExpectedVersion. Stream: ${stream}, Expected version: ${expectedVersion}, Current version: ${response.currentVersion}`
       )
     default:
       throw new Error(`Unexpected OperationResult: ${response.result}`)
   }
 }
 
-export const makeReadEventHandler = (eventNumber: number) => ({ result, error, ...response }: ReadEventCompleted) => {
+export const makeReadEventHandler = (eventNumber: number) => ({ result, error, ...response }: ClientMessages.ReadEventCompleted): EventReadResult => {
   switch (result) {
-    case ReadEventResult.Success:
+    case ClientMessages.ReadEventResult.Success:
       return { ...response, eventNumber, status: EventReadStatus.Success }
-    case ReadEventResult.NoStream:
+    case ClientMessages.ReadEventResult.NoStream:
       return { ...response, eventNumber, status: EventReadStatus.NoStream }
-    case ReadEventResult.NotFound:
+    case ClientMessages.ReadEventResult.NotFound:
       return { ...response, eventNumber, status: EventReadStatus.NotFound }
-    case ReadEventResult.Error:
+    case ClientMessages.ReadEventResult.Error:
       throw new ServerError(error || '<no message>')
     default:
       throw new Error(`Unexpected ReadEventResult: ${result}`)
   }
 }
 
-const handleReadStremEventsResponse = ({ result, error, ...response }: ReadStreamEventsCompleted) => {
+export const makeReadStremEventsHandler = (direction: ReadDirection) => ({ result, error, ...response }: ClientMessages.ReadStreamEventsCompleted): StreamEventsSlice => {
   switch (result) {
-    case ReadStreamResult.Success:
-      return { ...response, status: SliceReadStatus.Success }
-    case ReadStreamResult.NoStream:
-      return { ...response, status: SliceReadStatus.NoStream }
-    case ReadStreamResult.Error:
+    case ClientMessages.ReadStreamResult.Success:
+      return { ...response, status: SliceReadStatus.Success, readDirection: direction }
+    case ClientMessages.ReadStreamResult.NoStream:
+      return { ...response, status: SliceReadStatus.NoStream, readDirection: direction }
+    case ClientMessages.ReadStreamResult.Error:
       throw new ServerError(error || '<no message>')
     default:
-      throw Error(`Unexpected ReadStreamResult: ${result}`)
-  }
-}
-
-export const readStreamEventsForwardHandler = (response: ReadStreamEventsCompleted) => {
-  return {
-    ...handleReadStremEventsResponse(response),
-    readDirection: ReadDirection.Forward,
-  }
-}
-
-export const readStreamEventsBackwarddHandler = (response: ReadStreamEventsCompleted) => {
-  return {
-    ...handleReadStremEventsResponse(response),
-    readDirection: ReadDirection.Backward,
+      throw new Error(`Unexpected ReadStreamResult: ${result}`)
   }
 }
