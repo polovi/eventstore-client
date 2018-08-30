@@ -1,4 +1,4 @@
-import { ReadDirection, EventData } from './data'
+import { ReadDirection, EventRecord } from './data'
 
 export interface WriteResult {
   nextExpectedVersion: number
@@ -14,7 +14,7 @@ export interface EventReadResult {
   status: EventReadStatus
   stream: string
   eventNumber: number
-  event?: EventData
+  event?: EventRecord
 }
 
 export enum SliceReadStatus {
@@ -26,7 +26,7 @@ export interface StreamEventsSlice {
   status: SliceReadStatus
   stream: string
   readDirection: ReadDirection
-  events: EventData[]
+  events: EventRecord[]
   fromEventNumber: number
   nextEventNumber: number
   lastEventNumber: number
