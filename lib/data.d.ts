@@ -25,3 +25,16 @@ export interface EventRecord extends EventData {
     eventId: string;
     eventNumber: number;
 }
+export declare enum StartFrom {
+    Current = -1,
+    Beginning = 0
+}
+export interface PersistentSubscriptionSettings {
+    startFrom: StartFrom | number;
+    service: 'kinesis' | 'sqs' | 'sns';
+}
+export declare enum PersistentSubscriptionCreateStatus {
+    Success = 0,
+    AlreadyExists = 1,
+    Failure = 2
+}

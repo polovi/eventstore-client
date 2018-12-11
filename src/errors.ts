@@ -10,10 +10,6 @@ export class ArgumentNullException extends Error {
 
 export class ArgumentOutOfRangeException extends Error {
   constructor(argumentName?: string, msg?: string) {
-    super(
-      `${msg || 'Specified argument was out of the range of valid values.'}${
-        argumentName ? ` Parameter name: ${argumentName}` : ''
-      }`
-    )
+    super(`${msg || 'Specified argument was out of the range of valid values.'}${argumentName ? ` Parameter name: ${argumentName}` : ''}`)
   }
 }

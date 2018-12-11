@@ -1,4 +1,4 @@
-//prettier-ignore
+// prettier-ignore
 export enum InvocationCommand {
   // Ping = 0x03,
 
@@ -35,4 +35,23 @@ export interface EventData {
 export interface EventRecord extends EventData {
   eventId: string
   eventNumber: number
+}
+
+export enum StartFrom {
+  Current = -1,
+  Beginning = 0,
+}
+
+export interface PersistentSubscriptionSettings {
+  startFrom: StartFrom | number
+  service: 'kinesis' | 'sqs' | 'sns'
+}
+
+export enum PersistentSubscriptionCreateStatus {
+  // The subscription was created successfully
+  Success = 0,
+  // The subscription already exists
+  AlreadyExists = 1,
+  // Some failure happened creating the subscription
+  Failure = 2,
 }

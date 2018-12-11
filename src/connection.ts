@@ -1,10 +1,10 @@
-import * as Ensure from './utils/ensure'
+import { EventData, InvocationCommand, PersistentSubscriptionSettings, ReadDirection } from './data'
 import { ArgumentOutOfRangeException } from './errors'
-import { sendMessage } from './transport'
-import { InvocationCommand, ReadDirection, EventData } from './data'
-import { WriteResult, EventReadResult, StreamEventsSlice } from './results'
+import { makeCreatePersistantSubscriptionHandler, makeReadEventHandler, makeReadStremEventsHandler, makeWriteEventsHandler } from './handlers'
 import * as ClientMessage from './messages'
-import { makeWriteEventsHandler, makeReadEventHandler, makeReadStremEventsHandler } from './handlers'
+import { EventReadResult, PersistentSubscriptionCreateResult, StreamEventsSlice, WriteResult } from './results'
+import { sendMessage } from './transport'
+import * as Ensure from './utils/Ensure'
 
 export interface IEventStoreConnection {
   appendToStream(stream: string, expectedVersion: number, events: EventData[]): Promise<WriteResult>
@@ -13,11 +13,12 @@ export interface IEventStoreConnection {
   readStreamEventsBackward(stream: string, start: number, count?: number): Promise<StreamEventsSlice>
   readAllEventsForward(position: any, count?: number)
   readAllEventsBackward(position: any, count?: number)
+  createPersistantSubscription(stream: string, settings: PersistentSubscriptionSettings): Promise<PersistentSubscriptionCreateResult>
 }
 
 export const createConnection = (endpoint: string): IEventStoreConnection => ({
   appendToStream: async (stream, expectedVersion, events) => {
-    Ensure.notNullOrEmpty(stream, 'stream')
+    Ensure.notNull(stream, 'stream')
     Ensure.notEmpty(events, 'events')
 
     const handler = makeWriteEventsHandler(stream, expectedVersion)
@@ -29,7 +30,7 @@ export const createConnection = (endpoint: string): IEventStoreConnection => ({
   },
 
   readEvent: async (stream, eventNumber) => {
-    Ensure.notNullOrEmpty(stream, 'stream')
+    Ensure.notNull(stream, 'stream')
     if (eventNumber < -1) throw new ArgumentOutOfRangeException('eventNumber')
 
     const handler = makeReadEventHandler(eventNumber)
@@ -41,7 +42,7 @@ export const createConnection = (endpoint: string): IEventStoreConnection => ({
   },
 
   readStreamEventsForward: async (stream, start, count?) => {
-    Ensure.notNullOrEmpty(stream, 'stream')
+    Ensure.notNull(stream, 'stream')
     Ensure.nonNegative(start, 'start')
     count && Ensure.positive(count, 'count')
 
@@ -54,7 +55,7 @@ export const createConnection = (endpoint: string): IEventStoreConnection => ({
   },
 
   readStreamEventsBackward: async (stream, start, count?) => {
-    Ensure.notNullOrEmpty(stream, 'stream')
+    Ensure.notNull(stream, 'stream')
     count && Ensure.positive(count, 'count')
 
     const handler = makeReadStremEventsHandler(ReadDirection.Backward)
@@ -71,5 +72,17 @@ export const createConnection = (endpoint: string): IEventStoreConnection => ({
 
   readAllEventsBackward: (position, count?) => {
     throw new Error('Not implemented')
+  },
+
+  createPersistantSubscription: (stream, settings) => {
+    Ensure.notNull(stream, 'stream')
+    Ensure.notNull(settings, 'settings')
+
+    const handler = makeCreatePersistantSubscriptionHandler(stream)
+
+    return sendMessage<PersistentSubscriptionCreateResult, ClientMessage.CreatePersistentSubscriptionCompleted>(endpoint, handler, {
+      command: InvocationCommand.CreatePersistentSubscription,
+      data: { stream, settings },
+    })
   },
 })

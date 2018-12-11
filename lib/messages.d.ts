@@ -36,3 +36,11 @@ export interface ReadStreamEventsCompleted {
     isEndOfStream: boolean;
     error?: string;
 }
+export declare enum CreatePersistentSubscriptionResult {
+    Success = 0,
+    AlreadyExists = 1,
+    Fail = 2
+}
+export interface CreatePersistentSubscriptionCompleted {
+    result: CreatePersistentSubscriptionResult;
+}

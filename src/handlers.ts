@@ -1,7 +1,7 @@
-import { WrongExpectedVersionError, ServerError } from './errors'
+import { PersistentSubscriptionCreateStatus, ReadDirection } from './data'
+import { ServerError, WrongExpectedVersionError } from './errors'
 import * as ClientMessages from './messages'
-import { EventReadStatus, EventReadResult, WriteResult, StreamEventsSlice, SliceReadStatus } from './results'
-import { ReadDirection } from './data'
+import { EventReadResult, EventReadStatus, PersistentSubscriptionCreateResult, SliceReadStatus, StreamEventsSlice, WriteResult } from './results'
 
 export const makeWriteEventsHandler = (stream: string, expectedVersion: number) => (response: ClientMessages.WriteEventsCompleted): WriteResult => {
   switch (response.result) {
@@ -41,5 +41,12 @@ export const makeReadStremEventsHandler = (direction: ReadDirection) => ({ resul
       throw new ServerError(error || '<no message>')
     default:
       throw new Error(`Unexpected ReadStreamResult: ${result}`)
+  }
+}
+
+export const makeCreatePersistantSubscriptionHandler = stream => (result: ClientMessages.CreatePersistentSubscriptionCompleted): PersistentSubscriptionCreateResult => {
+  console.log('CreatePersistentSubscriptionCompleted', JSON.stringify(result, null, 2))
+  return {
+    status: PersistentSubscriptionCreateStatus.Success,
   }
 }

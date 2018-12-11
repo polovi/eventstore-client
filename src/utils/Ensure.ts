@@ -1,6 +1,6 @@
 import { ArgumentNullException, ArgumentOutOfRangeException } from '../errors'
 
-export const notNullOrEmpty = (argument: string, argumentName: string) => {
+export const notNull = (argument: any, argumentName: string) => {
   if (!argument) {
     throw new ArgumentNullException(argumentName)
   }
@@ -12,14 +12,14 @@ export const notEmpty = <T>(argument: T[], argumentName: string) => {
   }
 }
 
-export const positive = (number: number, argumentName: string) => {
-  if (number <= 0) {
+export const positive = (value: number, argumentName: string) => {
+  if (value <= 0) {
     throw new ArgumentOutOfRangeException(argumentName, `${argumentName} should be positive.`)
   }
 }
 
-export const nonNegative = (number: number, argumentName: string) => {
-  if (number < 0) {
+export const nonNegative = (value: number, argumentName: string) => {
+  if (value < 0) {
     throw new ArgumentOutOfRangeException(argumentName, `${argumentName} should be non-negative.`)
   }
 }

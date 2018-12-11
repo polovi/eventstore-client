@@ -1,4 +1,4 @@
-import { ReadDirection, EventRecord } from './data';
+import { EventRecord, PersistentSubscriptionCreateStatus, ReadDirection } from './data';
 export interface WriteResult {
     nextExpectedVersion: number;
 }
@@ -26,4 +26,7 @@ export interface StreamEventsSlice {
     nextEventNumber: number;
     lastEventNumber: number;
     isEndOfStream: boolean;
+}
+export interface PersistentSubscriptionCreateResult {
+    status: PersistentSubscriptionCreateStatus;
 }
